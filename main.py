@@ -5,15 +5,13 @@ from board import *
 from solve import *
 
 
-board = '''8
-7 . 8 . . . . 8
-. . 1 4 . . . .
-1 . . 4 8 5 . 5
-7 7 . 3 . 6 3 .
-. . . 3 . . 4 .
-. 2 . 6 . . 3 3
-3 1 5 . . 6 6 .
-2 . . 5 6 . . .'''
+board = '''5
+4 . . . .
+1 . 2 3 .
+. 4 5 . .
+. 6 1 5 3
+. . 6 3 .
+'''
 
 fp = StringIO.StringIO(board)
 

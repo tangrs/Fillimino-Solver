@@ -76,6 +76,6 @@ def solve(board):
     if (boardIsValid(board)):
         sys.stdout.write("[Success. Done in {0:0.4f}s]\n".format(time.time()-timeLast))
     else:
-        sys.stdout.write("[Fail]\n")
+        sys.stdout.write("[Fail. Is it unsolvable?]\n")
     sys.stdout.write("[*] Total solving time: {0:0.4f}s\n".format(time.time()-startTime))
     return

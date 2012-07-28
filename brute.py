@@ -4,9 +4,11 @@ import time
 import math
 
 def shapeBruteforce(board, toCheck):
+    map,size = board
+    w,h = size
     if (len(toCheck)==0):
-
         if (boardIsValid(board)):
+            printProgress(board, h)
             return 1
         else:
             return 0
@@ -14,6 +16,13 @@ def shapeBruteforce(board, toCheck):
     if (shapeCreate(board, position, toCheck)): return 1
     toCheck.append(position)
     return 0
+
+def printProgress(board, h):
+    global bruteforceStartTime
+    global lastCheckedTime
+    lastCheckedTime = time.time()
+    printBoard(board)
+    sys.stdout.write("[*] Generated {0} shapes at {1:0.1f} shapes/second.\033[{2};A\r".format(bruteforceCount, bruteforceCount / (time.time()-bruteforceStartTime),h))
 
 def shapeCreate(board, position, toCheck):
     map,size = board
@@ -23,13 +32,9 @@ def shapeCreate(board, position, toCheck):
     if (len(blockItems) > id): return 0
     elif (len(blockItems) == id):
         global bruteforceCount
-        global bruteforceStartTime
-        global lastCheckedTime
         bruteforceCount += 1
         if ((time.time()-lastCheckedTime) > 0.5):
-            lastCheckedTime = time.time()
-            printBoard(board)
-            sys.stdout.write("[*] Generated {0} shapes at {1:0.1f} shapes/second.\033[{2};A\r".format(bruteforceCount, bruteforceCount / (time.time()-bruteforceStartTime),h))
+            printProgress(board, h)
         if (shapeBruteforce(board, toCheck)):
             return 1
     else:
@@ -54,7 +59,7 @@ def runBruteforce(board):
     global lastCheckedTime
     bruteforceCount=0
     bruteforceStartTime = time.time()
-    lastCheckedTime = time.time()
+    lastCheckedTime = 0
     for key, obj in map.items():
         if (obj.id != 0 and obj.clean == 0):
             toCheck.append(key)

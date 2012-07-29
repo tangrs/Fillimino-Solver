@@ -13,7 +13,7 @@ def shapeBruteforce(board, toCheck):
         else:
             return 0
     position = toCheck.pop()
-    if (shapeCreate(board, position, toCheck)): return 1
+    if (shapeCreate(board, position, toCheck, [])): return 1
     toCheck.append(position)
     return 0
 
@@ -24,7 +24,7 @@ def printProgress(board, h):
     printBoard(board)
     sys.stdout.write("[*] Generated {0} shapes at {1:0.1f} shapes/second.\033[{2};A\r".format(bruteforceCount, bruteforceCount / (time.time()-bruteforceStartTime),h))
 
-def shapeCreate(board, position, toCheck):
+def shapeCreate(board, position, toCheck, shapesCache):
     map,size = board
     w,h = size
     blockItems = blockItemSearch(board, position)
@@ -35,6 +35,8 @@ def shapeCreate(board, position, toCheck):
         bruteforceCount += 1
         if ((time.time()-lastCheckedTime) > 0.5):
             printProgress(board, h)
+        if (blockItems in shapesCache): return 0
+        shapesCache.append(blockItems)
         if (shapeBruteforce(board, toCheck)):
             return 1
     else:
@@ -45,7 +47,7 @@ def shapeCreate(board, position, toCheck):
         if (frees < id-len(blockItems)): return 0
         for pos in frees:
             map[pos].id = id
-            if (shapeCreate(board, pos, toCheck)): return 1
+            if (shapeCreate(board, pos, toCheck, shapesCache)): return 1
             map[pos].id = 0
     return 0
 

@@ -35,8 +35,8 @@ def shapeCreate(board, position, toCheck, shapesCache):
         bruteforceCount += 1
         if ((time.time()-lastCheckedTime) > 0.5):
             printProgress(board, h)
-        if (blockItems in shapesCache): return 0
-        shapesCache.append(blockItems)
+        if (set(blockItems) in shapesCache): return 0
+        shapesCache.append(set(blockItems))
         if (shapeBruteforce(board, toCheck)):
             return 1
     else:

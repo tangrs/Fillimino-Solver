@@ -4,12 +4,8 @@ from blocksearch import *
 import sys
 import time
 
-def solve(board):
+def solveAllPossible(board, changedList):
     map,size = board
-    w,h = size
-    startTime = time.time()
-    timeLast = time.time()
-    sys.stdout.write("[*] Solving all certain blocks... ")
     count = 1
     while (count>0):
         count = 0
@@ -34,6 +30,7 @@ def solve(board):
 
                     if (unsolvedId > 0 and totalBlks < unsolvedId):
                         map[position].id = unsolvedId
+                        changedList.append(position)
                         count += 1
 
             else:
@@ -47,7 +44,16 @@ def solve(board):
 
                     map[frees[0]].id = obj.id
                     map[frees[0]].parent = position
+                    changedList.append(position)
                     count+=1
+
+def solve(board):
+    map,size = board
+    w,h = size
+    startTime = time.time()
+    timeLast = time.time()
+    sys.stdout.write("[*] Solving all certain blocks... ")
+    solveAllPossible(board, [])
     sys.stdout.write("[Done in {0:0.4f}s]\n".format(time.time()-timeLast))
     timeLast = time.time()
     sys.stdout.write("[*] Optimize slightly for bruteforcing... ")

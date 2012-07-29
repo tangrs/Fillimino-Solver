@@ -13,7 +13,7 @@ def shapeBruteforce(board, toCheck):
         else:
             return 0
     position = toCheck.pop()
-    if (shapeCreate(board, position, toCheck, [])): return 1
+    if (shapeCreate(board, position, toCheck, [], blockItemSearch(board, position) )): return 1
     toCheck.append(position)
     return 0
 
@@ -24,10 +24,10 @@ def printProgress(board, h):
     printBoard(board)
     sys.stdout.write("[*] Generated {0} shapes at {1:0.1f} shapes/second.\033[{2};A\r".format(bruteforceCount, bruteforceCount / (time.time()-bruteforceStartTime),h))
 
-def shapeCreate(board, position, toCheck, shapesCache):
+def shapeCreate(board, position, toCheck, shapesCache, blockItemsCache):
     map,size = board
     w,h = size
-    blockItems = blockItemSearch(board, position)
+    blockItems = blockItemsCache
     id = map[position].id
     if (len(blockItems) > id): return 0
     elif (len(blockItems) == id):
@@ -47,14 +47,20 @@ def shapeCreate(board, position, toCheck, shapesCache):
         if (frees < id-len(blockItems)): return 0
         for pos in frees:
             map[pos].id = id
-            if (shapeCreate(board, pos, toCheck, shapesCache)): return 1
+            selfs,_,_,_ = checkSurrounding(board, pos)
+            if (len(selfs) > 1):
+                if (shapeCreate(board, pos, toCheck, shapesCache, blockItemSearch(board, pos))): return 1
+            else:
+                blockItems.append(pos)
+                if (shapeCreate(board, pos, toCheck, shapesCache, blockItems)): return 1
+                blockItems.remove(pos)
             map[pos].id = 0
     return 0
 
 def runBruteforce(board):
     map,size = board
     w,h = size
-    toCheck = []
+    toCheck = {}
     maxn = max(w,h)
     global bruteforceCount
     global bruteforceStartTime
@@ -64,5 +70,7 @@ def runBruteforce(board):
     lastCheckedTime = 0
     for key, obj in map.items():
         if (obj.id != 0 and obj.clean == 0):
-            toCheck.append(key)
+            toCheck[key] = obj.id
+    # Smaller blocks have less combinations so are more likely to be right on the first try
+    toCheck = sorted(toCheck, lambda x,y: cmp(map[x].id, map[y].id) )
     return shapeBruteforce(board, toCheck)
